@@ -1,0 +1,24 @@
+{
+  "name": "sre-observability-lab-api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Instrumented API for the SRE and Observability Lab",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test",
+    "check": "npm test"
+  },
+  "engines": {
+    "node": ">=22 <25"
+  },
+  "dependencies": {
+    "@prometheus-io/client": "0.16.1",
+    "express": "5.2.1",
+    "pino": "10.3.1",
+    "pino-http": "11.0.0"
+  },
+  "devDependencies": {
+    "supertest": "7.3.0"
+  }
+}
