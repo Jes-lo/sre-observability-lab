@@ -1,0 +1,90 @@
+name: sre-observability-lab
+
+services:
+  api:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+
+    image: sre-observability-api:local
+
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "3000"
+      LAB_FAULTS_ENABLED: "false"
+
+    ports:
+      - "127.0.0.1:3000:3000"
+
+    read_only: true
+
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+
+    cap_drop:
+      - ALL
+
+    security_opt:
+      - no-new-privileges:true
+
+    mem_limit: 256m
+    cpus: 0.50
+    pids_limit: 100
+
+    init: true
+
+    networks:
+      - observability
+
+    restart: "no"
+
+  prometheus:
+    image: prom/prometheus@sha256:6976aa8a60fec930796ce5772b8d12da7a318a5daa8d40d69c5c7819a05eeed7
+
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=24h
+      - --web.listen-address=0.0.0.0:9090
+
+    volumes:
+      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./observability/prometheus/recording-rules.yml:/etc/prometheus/recording-rules.yml:ro
+      - prometheus_data:/prometheus
+
+    ports:
+      - "127.0.0.1:9090:9090"
+
+    read_only: true
+
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+
+    cap_drop:
+      - ALL
+
+    security_opt:
+      - no-new-privileges:true
+
+    mem_limit: 512m
+    cpus: 0.50
+    pids_limit: 150
+
+    init: true
+
+    depends_on:
+      api:
+        condition: service_healthy
+
+    networks:
+      - observability
+
+    restart: "no"
+
+volumes:
+  prometheus_data:
+
+networks:
+  observability:
+    driver: bridge
