@@ -17,7 +17,7 @@ concurrency:
 jobs:
   application-validation:
     name: Application Validation
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
 
     steps:
@@ -46,7 +46,7 @@ jobs:
 
   container-validation:
     name: Container Security Validation
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
 
     steps:
@@ -57,3 +57,17 @@ jobs:
 
       - name: Validate hardened API container
         run: ./scripts/validate-api-container.sh
+
+  prometheus-validation:
+    name: Prometheus Configuration Validation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Validate Prometheus configuration
+        run: ./scripts/validate-prometheus.sh
