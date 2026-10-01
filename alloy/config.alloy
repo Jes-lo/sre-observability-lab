@@ -1,0 +1,61 @@
+logging {
+  level  = "info"
+  format = "logfmt"
+}
+
+loki.source.file "api" {
+  targets = [
+    {
+      "__path__"    = "/var/log/sre-api/api.log",
+      "service"     = "sre-api",
+      "environment" = "local",
+    },
+  ]
+
+  forward_to = [
+    loki.process.api.receiver,
+  ]
+}
+
+loki.process "api" {
+  stage.json {
+    expressions = {
+      timestamp        = "time",
+      level            = "level",
+      event            = "event",
+      request_id       = "req.id",
+      method           = "req.method",
+      url              = "req.url",
+      status_code      = "res.statusCode",
+      response_time_ms = "responseTime",
+    }
+  }
+
+  stage.timestamp {
+    source            = "timestamp"
+    format            = "UnixMs"
+    action_on_failure = "skip"
+  }
+
+  stage.structured_metadata {
+    values = {
+      level            = "level",
+      event            = "event",
+      request_id       = "request_id",
+      method           = "method",
+      url              = "url",
+      status_code      = "status_code",
+      response_time_ms = "response_time_ms",
+    }
+  }
+
+  forward_to = [
+    loki.write.local.receiver,
+  ]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

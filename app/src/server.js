@@ -1,49 +1,89 @@
 const { app } = require("./app");
+const { logger } = require("./logger");
 
 const port = Number.parseInt(process.env.PORT || "3000", 10);
 const host = process.env.HOST || "0.0.0.0";
 
 const server = app.listen(port, host, () => {
-  console.log(
-    JSON.stringify({
-      level: "info",
+  logger.info(
+    {
       event: "server_started",
       host,
       port,
-    })
+    },
+    "Server started"
   );
 });
 
+let shuttingDown = false;
+
+function flushAndExit(code) {
+  try {
+    logger.flush((error) => {
+      if (error) {
+        process.stderr.write(
+          JSON.stringify({
+            level: "error",
+            event: "logger_flush_failed",
+            error: error.message,
+          }) + "\n"
+        );
+
+        process.exit(1);
+      }
+
+      process.exit(code);
+    });
+  } catch (error) {
+    process.stderr.write(
+      JSON.stringify({
+        level: "error",
+        event: "logger_flush_failed",
+        error: error.message,
+      }) + "\n"
+    );
+
+    process.exit(1);
+  }
+}
+
 function shutdown(signal) {
-  console.log(
-    JSON.stringify({
-      level: "info",
+  if (shuttingDown) {
+    return;
+  }
+
+  shuttingDown = true;
+
+  logger.info(
+    {
       event: "shutdown_requested",
       signal,
-    })
+    },
+    "Shutdown requested"
   );
 
   server.close((error) => {
     if (error) {
-      console.error(
-        JSON.stringify({
-          level: "error",
+      logger.error(
+        {
           event: "shutdown_failed",
-          error: error.message,
-        })
+          err: error,
+        },
+        "Server shutdown failed"
       );
 
-      process.exit(1);
+      flushAndExit(1);
+      return;
     }
 
-    console.log(
-      JSON.stringify({
-        level: "info",
+    logger.info(
+      {
         event: "server_stopped",
-      })
+      },
+      "Server stopped"
     );
 
-    process.exit(0);
+    flushAndExit(0);
   });
 }
 
