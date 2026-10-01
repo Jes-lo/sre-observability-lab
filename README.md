@@ -1,6 +1,6 @@
 # SRE & Observability Lab
 
-**Core technologies:** Node.js · Docker Compose · Prometheus · Alertmanager · Grafana · Loki · Grafana Alloy · OpenTelemetry · Tempo · GitHub Actions
+**Core technologies:** Node.js · Docker Compose · Prometheus · Alertmanager · Grafana · Loki · Grafana Alloy · OpenTelemetry · Tempo · k6 · GitHub Actions
 
 A local, reproducible SRE and observability laboratory focused on service reliability engineering, telemetry correlation, SLOs, alerting, incident response, and troubleshooting.
 
@@ -30,7 +30,7 @@ The project will demonstrate:
 
 The laboratory will run locally using Docker Compose.
 
-Planned core components:
+Core components:
 
 - instrumented Node.js API
 - Prometheus
@@ -65,7 +65,9 @@ The current laboratory includes:
 - multi-window availability and latency error-budget burn-rate alerting
 - local Alertmanager severity routing with no external notification credentials
 - deterministic Prometheus alert-rule tests
-- automated application, container, Prometheus, Grafana, logging, tracing, SLO, and alerting validation
+- isolated k6 controlled-load and controlled-failure scenarios
+- hardened load-test target on a dedicated internal Docker network
+- automated application, container, Prometheus, Grafana, logging, tracing, SLO, alerting, and load-scenario validation
 
 Observability design and operational details are documented in:
 
@@ -73,6 +75,7 @@ Observability design and operational details are documented in:
 - [Distributed Tracing](docs/distributed-tracing.md)
 - [SLIs, SLOs, and Error Budgets](docs/slo-error-budgets.md)
 - [Alerting and Alertmanager](docs/alerting-and-alertmanager.md)
+- [Controlled Load and Failure Scenarios](docs/controlled-load-and-failures.md)
 
 ## Security Principles
 
@@ -120,8 +123,9 @@ Implemented so far:
 5. OpenTelemetry distributed tracing with Alloy, Tempo, and bidirectional log correlation
 6. request-based SLIs, SLOs, and error budgets with Prometheus and Grafana
 7. symptom-based and burn-rate alerting with Prometheus and Alertmanager
+8. controlled load and failure scenarios with k6
 
-Planned next phases include controlled load and incident-response workflows.
+Planned next phases include incident-response workflows, runbooks, and postmortems.
 
 ## License and Third-Party Software
 
