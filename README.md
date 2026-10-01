@@ -135,7 +135,7 @@ Implemented so far:
 8. controlled load and failure scenarios with k6
 9. reproducible incident response, runbooks, and postmortems
 
-The feature roadmap is complete through incident response. Final fresh-clone reproducibility and release validation remain before `v1.0.0`.
+The feature roadmap is complete through incident response. `v1.0.0` represents the first complete portfolio implementation of the current local-lab scope.
 
 ## License and Third-Party Software
 
