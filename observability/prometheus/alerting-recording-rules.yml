@@ -1,0 +1,125 @@
+groups:
+  - name: sre_api_alerting_metrics
+    interval: 5s
+
+    rules:
+      - record: sre_api:slo_availability_bad_ratio:rate1m
+        expr: |-
+          (
+            (
+              sum(rate(sre_lab_http_requests_total{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)",status_code=~"5.."}[1m]))
+              or vector(0)
+            )
+            /
+            sum(rate(sre_lab_http_requests_total{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)"}[1m]))
+          )
+          and on()
+          (
+            sum(rate(sre_lab_http_requests_total{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)"}[1m])) > 0
+          )
+      - record: sre_api:slo_availability_bad_ratio:rate5m
+        expr: |-
+          (
+            (
+              sum(rate(sre_lab_http_requests_total{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)",status_code=~"5.."}[5m]))
+              or vector(0)
+            )
+            /
+            sum(rate(sre_lab_http_requests_total{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)"}[5m]))
+          )
+          and on()
+          (
+            sum(rate(sre_lab_http_requests_total{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)"}[5m])) > 0
+          )
+      - record: sre_api:slo_availability_bad_ratio:rate15m
+        expr: |-
+          (
+            (
+              sum(rate(sre_lab_http_requests_total{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)",status_code=~"5.."}[15m]))
+              or vector(0)
+            )
+            /
+            sum(rate(sre_lab_http_requests_total{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)"}[15m]))
+          )
+          and on()
+          (
+            sum(rate(sre_lab_http_requests_total{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)"}[15m])) > 0
+          )
+      - record: sre_api:slo_latency_bad_ratio:rate1m
+        expr: |-
+          clamp_min(
+            1
+            -
+            (
+              sum(rate(sre_lab_http_request_duration_seconds_bucket{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)",status_code!~"5..",le="0.25"}[1m]))
+              /
+              sum(rate(sre_lab_http_request_duration_seconds_count{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)",status_code!~"5.."}[1m]))
+            ),
+            0
+          )
+          and on()
+          (
+            sum(rate(sre_lab_http_request_duration_seconds_count{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)",status_code!~"5.."}[1m])) > 0
+          )
+      - record: sre_api:slo_latency_bad_ratio:rate5m
+        expr: |-
+          clamp_min(
+            1
+            -
+            (
+              sum(rate(sre_lab_http_request_duration_seconds_bucket{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)",status_code!~"5..",le="0.25"}[5m]))
+              /
+              sum(rate(sre_lab_http_request_duration_seconds_count{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)",status_code!~"5.."}[5m]))
+            ),
+            0
+          )
+          and on()
+          (
+            sum(rate(sre_lab_http_request_duration_seconds_count{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)",status_code!~"5.."}[5m])) > 0
+          )
+      - record: sre_api:slo_latency_bad_ratio:rate15m
+        expr: |-
+          clamp_min(
+            1
+            -
+            (
+              sum(rate(sre_lab_http_request_duration_seconds_bucket{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)",status_code!~"5..",le="0.25"}[15m]))
+              /
+              sum(rate(sre_lab_http_request_duration_seconds_count{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)",status_code!~"5.."}[15m]))
+            ),
+            0
+          )
+          and on()
+          (
+            sum(rate(sre_lab_http_request_duration_seconds_count{job="sre-observability-api",method="GET",route=~"/api/(work|slow|error)",status_code!~"5.."}[15m])) > 0
+          )
+      - record: sre_api:slo_availability_burn_rate:ratio1m
+        expr: |-
+          sre_api:slo_availability_bad_ratio:rate1m
+          /
+          sre_api:slo_availability_error_budget:ratio
+      - record: sre_api:slo_availability_burn_rate:ratio5m
+        expr: |-
+          sre_api:slo_availability_bad_ratio:rate5m
+          /
+          sre_api:slo_availability_error_budget:ratio
+      - record: sre_api:slo_availability_burn_rate:ratio15m
+        expr: |-
+          sre_api:slo_availability_bad_ratio:rate15m
+          /
+          sre_api:slo_availability_error_budget:ratio
+      - record: sre_api:slo_latency_burn_rate:ratio1m
+        expr: |-
+          sre_api:slo_latency_bad_ratio:rate1m
+          /
+          sre_api:slo_latency_error_budget:ratio
+      - record: sre_api:slo_latency_burn_rate:ratio5m
+        expr: |-
+          sre_api:slo_latency_bad_ratio:rate5m
+          /
+          sre_api:slo_latency_error_budget:ratio
+      - record: sre_api:slo_latency_burn_rate:ratio15m
+        expr: |-
+          sre_api:slo_latency_bad_ratio:rate15m
+          /
+          sre_api:slo_latency_error_budget:ratio

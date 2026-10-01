@@ -1,0 +1,193 @@
+rule_files:
+- alerting-recording-rules.yml
+- alerting-rules.yml
+evaluation_interval: 5s
+tests:
+- name: no eligible traffic produces no alerting ratios
+  interval: 5s
+  input_series:
+  - series: sre_api:slo_availability_error_budget:ratio
+    values: 0.01x20
+  - series: sre_api:slo_latency_error_budget:ratio
+    values: 0.01x20
+  promql_expr_test:
+  - expr: sre_api:slo_availability_bad_ratio:rate1m
+    eval_time: 1m
+    exp_samples: []
+  - expr: sre_api:slo_latency_bad_ratio:rate1m
+    eval_time: 1m
+    exp_samples: []
+  - expr: sre_api:slo_availability_burn_rate:ratio1m
+    eval_time: 1m
+    exp_samples: []
+  - expr: sre_api:slo_latency_burn_rate:ratio1m
+    eval_time: 1m
+    exp_samples: []
+  alert_rule_test:
+  - eval_time: 1m
+    alertname: SreApiHigh5xxRatio
+    exp_alerts: []
+  - eval_time: 1m
+    alertname: SreApiHighLatencyRatio
+    exp_alerts: []
+  - eval_time: 1m
+    alertname: SreApiAvailabilityBurnRateFast
+    exp_alerts: []
+  - eval_time: 1m
+    alertname: SreApiAvailabilityBurnRateSlow
+    exp_alerts: []
+  - eval_time: 1m
+    alertname: SreApiLatencyBurnRateFast
+    exp_alerts: []
+  - eval_time: 1m
+    alertname: SreApiLatencyBurnRateSlow
+    exp_alerts: []
+- name: twelve percent bad events produce twelve-x burn rates
+  interval: 5s
+  input_series:
+  - series: sre_lab_http_requests_total{job="sre-observability-api",method="GET",route="/api/work",status_code="200"}
+    values: 0+88x20
+  - series: sre_lab_http_requests_total{job="sre-observability-api",method="GET",route="/api/error",status_code="500"}
+    values: 0+12x20
+  - series: sre_lab_http_request_duration_seconds_count{job="sre-observability-api",method="GET",route="/api/work",status_code="200"}
+    values: 0+100x20
+  - series: sre_lab_http_request_duration_seconds_bucket{job="sre-observability-api",method="GET",route="/api/work",status_code="200",le="0.25"}
+    values: 0+88x20
+  - series: sre_api:slo_availability_error_budget:ratio
+    values: 0.01x20
+  - series: sre_api:slo_latency_error_budget:ratio
+    values: 0.01x20
+  promql_expr_test:
+  - expr: abs((sre_api:slo_availability_bad_ratio:rate1m) - 0.12) < bool 1e-09
+    eval_time: 1m
+    exp_samples:
+    - labels: '{}'
+      value: 1
+  - expr: abs((sre_api:slo_latency_bad_ratio:rate1m) - 0.12) < bool 1e-09
+    eval_time: 1m
+    exp_samples:
+    - labels: '{}'
+      value: 1
+  - expr: abs((sre_api:slo_availability_bad_ratio:rate5m) - 0.12) < bool 1e-09
+    eval_time: 1m
+    exp_samples:
+    - labels: '{}'
+      value: 1
+  - expr: abs((sre_api:slo_latency_bad_ratio:rate5m) - 0.12) < bool 1e-09
+    eval_time: 1m
+    exp_samples:
+    - labels: '{}'
+      value: 1
+  - expr: abs((sre_api:slo_availability_bad_ratio:rate15m) - 0.12) < bool 1e-09
+    eval_time: 1m
+    exp_samples:
+    - labels: '{}'
+      value: 1
+  - expr: abs((sre_api:slo_latency_bad_ratio:rate15m) - 0.12) < bool 1e-09
+    eval_time: 1m
+    exp_samples:
+    - labels: '{}'
+      value: 1
+  - expr: abs((sre_api:slo_availability_burn_rate:ratio1m) - 12) < bool 1e-09
+    eval_time: 1m
+    exp_samples:
+    - labels: '{}'
+      value: 1
+  - expr: abs((sre_api:slo_latency_burn_rate:ratio1m) - 12) < bool 1e-09
+    eval_time: 1m
+    exp_samples:
+    - labels: '{}'
+      value: 1
+  - expr: abs((sre_api:slo_availability_burn_rate:ratio5m) - 12) < bool 1e-09
+    eval_time: 1m
+    exp_samples:
+    - labels: '{}'
+      value: 1
+  - expr: abs((sre_api:slo_latency_burn_rate:ratio5m) - 12) < bool 1e-09
+    eval_time: 1m
+    exp_samples:
+    - labels: '{}'
+      value: 1
+  - expr: abs((sre_api:slo_availability_burn_rate:ratio15m) - 12) < bool 1e-09
+    eval_time: 1m
+    exp_samples:
+    - labels: '{}'
+      value: 1
+  - expr: abs((sre_api:slo_latency_burn_rate:ratio15m) - 12) < bool 1e-09
+    eval_time: 1m
+    exp_samples:
+    - labels: '{}'
+      value: 1
+  alert_rule_test:
+  - eval_time: 1m10s
+    alertname: SreApiHigh5xxRatio
+    exp_alerts:
+    - exp_labels:
+        severity: warning
+        service: sre-api
+        environment: local
+        category: symptom
+        slo: availability
+      exp_annotations:
+        summary: Eligible API requests are returning elevated HTTP 5xx responses.
+        description: More than 5% of eligible requests returned HTTP 5xx over the one-minute symptom window.
+  - eval_time: 1m10s
+    alertname: SreApiHighLatencyRatio
+    exp_alerts:
+    - exp_labels:
+        severity: warning
+        service: sre-api
+        environment: local
+        category: symptom
+        slo: latency
+      exp_annotations:
+        summary: Eligible API requests are experiencing elevated latency.
+        description: More than 5% of eligible non-5xx requests exceeded 250 ms over the one-minute symptom window.
+  - eval_time: 1m10s
+    alertname: SreApiAvailabilityBurnRateFast
+    exp_alerts:
+    - exp_labels:
+        severity: critical
+        service: sre-api
+        environment: local
+        category: burn-rate
+        slo: availability
+      exp_annotations:
+        summary: Availability error budget is burning at a critical rate.
+        description: Availability burn rate is above 10x on both the one-minute and five-minute windows.
+  - eval_time: 1m10s
+    alertname: SreApiAvailabilityBurnRateSlow
+    exp_alerts:
+    - exp_labels:
+        severity: warning
+        service: sre-api
+        environment: local
+        category: burn-rate
+        slo: availability
+      exp_annotations:
+        summary: Availability error budget is burning at a sustained rate.
+        description: Availability burn rate is above 2x on both the five-minute and fifteen-minute windows.
+  - eval_time: 1m10s
+    alertname: SreApiLatencyBurnRateFast
+    exp_alerts:
+    - exp_labels:
+        severity: critical
+        service: sre-api
+        environment: local
+        category: burn-rate
+        slo: latency
+      exp_annotations:
+        summary: Latency error budget is burning at a critical rate.
+        description: Latency burn rate is above 10x on both the one-minute and five-minute windows.
+  - eval_time: 1m10s
+    alertname: SreApiLatencyBurnRateSlow
+    exp_alerts:
+    - exp_labels:
+        severity: warning
+        service: sre-api
+        environment: local
+        category: burn-rate
+        slo: latency
+      exp_annotations:
+        summary: Latency error budget is burning at a sustained rate.
+        description: Latency burn rate is above 2x on both the five-minute and fifteen-minute windows.

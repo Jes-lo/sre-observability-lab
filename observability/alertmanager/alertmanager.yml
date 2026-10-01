@@ -1,0 +1,28 @@
+global:
+  resolve_timeout: 1m
+
+route:
+  receiver: local-default
+
+  group_by:
+    - service
+    - slo
+    - severity
+
+  group_wait: 5s
+  group_interval: 30s
+  repeat_interval: 30m
+
+  routes:
+    - receiver: local-critical
+      matchers:
+        - severity="critical"
+
+    - receiver: local-warning
+      matchers:
+        - severity="warning"
+
+receivers:
+  - name: local-default
+  - name: local-critical
+  - name: local-warning

@@ -12,7 +12,7 @@ Security issues relevant to this repository may include:
 - sensitive information recorded in metrics, logs, or traces;
 - authentication tokens, cookies, API keys, or authorization headers exposed
   through telemetry;
-- insecure Prometheus, Grafana, Loki, Tempo, or Grafana Alloy configuration;
+- insecure Prometheus, Alertmanager, Grafana, Loki, Tempo, or Grafana Alloy configuration;
 - unintended external exposure of observability services or telemetry
   endpoints;
 - unsafe Docker or container configuration;
@@ -50,6 +50,10 @@ This repository must not contain:
 Real credentials must not be introduced solely to simplify local testing or
 observability configuration.
 
+Alertmanager notification receivers that require credentials, tokens, webhook
+secrets, or external accounts must not be introduced without explicit security
+review and documented secret handling.
+
 ## Telemetry privacy
 
 Metrics, logs, and traces must be treated as potentially sensitive operational
@@ -69,7 +73,8 @@ labels without an explicit technical reason.
 ## Observability and runtime changes
 
 Changes to application instrumentation, Docker Compose configuration,
-Prometheus, Grafana, Loki, Tempo, Grafana Alloy, OpenTelemetry configuration,
+Prometheus, Alertmanager, Grafana, Loki, Tempo, Grafana Alloy,
+OpenTelemetry configuration,
 container configuration, and repository security controls should be reviewed
 and validated before merge.
 
