@@ -13,6 +13,10 @@
     "node": ">=22 <25"
   },
   "dependencies": {
+    "@opentelemetry/api": "1.9.1",
+    "@opentelemetry/auto-instrumentations-node": "0.80.0",
+    "@opentelemetry/exporter-trace-otlp-proto": "0.222.0",
+    "@opentelemetry/sdk-node": "0.222.0",
     "@prometheus-io/client": "0.16.1",
     "express": "5.2.1",
     "pino": "10.3.1",

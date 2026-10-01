@@ -28,6 +28,9 @@ loki.process "api" {
       url              = "req.url",
       status_code      = "res.statusCode",
       response_time_ms = "responseTime",
+      trace_id         = "trace_id",
+      span_id          = "span_id",
+      trace_flags      = "trace_flags",
     }
   }
 
@@ -46,6 +49,9 @@ loki.process "api" {
       url              = "url",
       status_code      = "status_code",
       response_time_ms = "response_time_ms",
+      trace_id         = "trace_id",
+      span_id          = "span_id",
+      trace_flags      = "trace_flags",
     }
   }
 
@@ -57,5 +63,35 @@ loki.process "api" {
 loki.write "local" {
   endpoint {
     url = "http://loki:3100/loki/api/v1/push"
+  }
+}
+
+otelcol.receiver.otlp "api_traces" {
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    traces = [
+      otelcol.processor.batch.api_traces.input,
+    ]
+  }
+}
+
+otelcol.processor.batch "api_traces" {
+  output {
+    traces = [
+      otelcol.exporter.otlp.tempo.input,
+    ]
+  }
+}
+
+otelcol.exporter.otlp "tempo" {
+  client {
+    endpoint = "tempo:4317"
+
+    tls {
+      insecure = true
+    }
   }
 }

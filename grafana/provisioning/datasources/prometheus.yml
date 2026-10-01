@@ -25,3 +25,31 @@ datasources:
     jsonData:
       timeout: 60
       maxLines: 1000
+
+      derivedFields:
+        - name: TraceID
+          datasourceUid: tempo
+          matcherRegex: '"trace_id":"([0-9a-f]{32})"'
+          url: '$${__value.raw}'
+          urlDisplayLabel: View Trace
+
+  - name: Tempo
+    uid: tempo
+    type: tempo
+    access: proxy
+    url: http://tempo:3200
+    isDefault: false
+    editable: false
+
+    jsonData:
+      tracesToLogsV2:
+        datasourceUid: loki
+        spanStartTimeShift: '-5m'
+        spanEndTimeShift: '5m'
+        filterByTraceID: false
+        filterBySpanID: false
+        customQuery: true
+        query: '{service="sre-api"} | trace_id=`$${__trace.traceId}`'
+
+      search:
+        hide: false
