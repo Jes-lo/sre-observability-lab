@@ -108,3 +108,17 @@ Implemented so far:
 5. OpenTelemetry distributed tracing with Alloy, Tempo, and bidirectional log correlation
 
 Planned next phases include SLOs, alerting, controlled load, and incident-response workflows.
+
+## License and Third-Party Software
+
+Repository-specific material is provided under the terms in
+[LICENSE](LICENSE).
+
+Third-party software, services, libraries, tools, trademarks, container images,
+and other materials remain subject to their respective licenses, terms, and
+intellectual-property rights.
+
+See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for third-party components
+and technologies currently used by this project.
+
+See [SECURITY.md](SECURITY.md) for the repository security policy.
