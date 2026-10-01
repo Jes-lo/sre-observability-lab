@@ -1,5 +1,7 @@
 # SRE & Observability Lab
 
+**Core technologies:** Node.js · Docker Compose · Prometheus · Grafana · Loki · Grafana Alloy · OpenTelemetry · Tempo · GitHub Actions
+
 A local, reproducible SRE and observability laboratory focused on service reliability engineering, telemetry correlation, SLOs, alerting, incident response, and troubleshooting.
 
 ## Project Goals
