@@ -57,12 +57,17 @@ The current laboratory includes:
 - OpenTelemetry distributed tracing exported through Grafana Alloy to Tempo
 - exact log-to-trace correlation with `trace_id` and `span_id`
 - bidirectional Grafana navigation between Loki logs and Tempo traces
-- automated application, container, Prometheus, Grafana, logging, and tracing validation
+- request-based availability and latency SLIs over explicit application routes
+- 99% availability and latency SLOs over a rolling 30-minute local-lab window
+- Prometheus error-budget consumption and remaining-budget recording rules
+- Grafana SLO and error-budget dashboard
+- automated application, container, Prometheus, Grafana, logging, tracing, and SLO validation
 
 Observability design and operational details are documented in:
 
 - [Centralized Logging](docs/centralized-logging.md)
 - [Distributed Tracing](docs/distributed-tracing.md)
+- [SLIs, SLOs, and Error Budgets](docs/slo-error-budgets.md)
 
 ## Security Principles
 
@@ -108,8 +113,9 @@ Implemented so far:
 3. Grafana RED dashboard
 4. centralized logging with Grafana Alloy and Loki
 5. OpenTelemetry distributed tracing with Alloy, Tempo, and bidirectional log correlation
+6. request-based SLIs, SLOs, and error budgets with Prometheus and Grafana
 
-Planned next phases include SLOs, alerting, controlled load, and incident-response workflows.
+Planned next phases include alerting, controlled load, and incident-response workflows.
 
 ## License and Third-Party Software
 

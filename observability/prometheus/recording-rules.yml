@@ -62,3 +62,144 @@ groups:
               )
             )
           )
+
+  - name: sre_api_slo
+    interval: 5s
+
+    rules:
+      - record: sre_api:slo_requests:increase30m
+        expr: >-
+          sum(
+            increase(
+              sre_lab_http_requests_total{
+                job="sre-observability-api",
+                method="GET",
+                route=~"/api/(work|slow|error)"
+              }[30m]
+            )
+          )
+
+      - record: sre_api:slo_5xx:increase30m
+        expr: >-
+          sum(
+            increase(
+              sre_lab_http_requests_total{
+                job="sre-observability-api",
+                method="GET",
+                route=~"/api/(work|slow|error)",
+                status_code=~"5.."
+              }[30m]
+            )
+          )
+          or vector(0)
+
+      - record: sre_api:slo_availability:ratio30m
+        expr: >-
+          (
+            (
+              sre_api:slo_requests:increase30m
+              -
+              sre_api:slo_5xx:increase30m
+            )
+            /
+            sre_api:slo_requests:increase30m
+          )
+          and on()
+          (
+            sre_api:slo_requests:increase30m > 0
+          )
+
+      - record: sre_api:slo_latency_good:increase30m
+        expr: >-
+          sum(
+            increase(
+              sre_lab_http_request_duration_seconds_bucket{
+                job="sre-observability-api",
+                method="GET",
+                route=~"/api/(work|slow|error)",
+                status_code!~"5..",
+                le="0.25"
+              }[30m]
+            )
+          )
+
+      - record: sre_api:slo_latency_total:increase30m
+        expr: >-
+          sum(
+            increase(
+              sre_lab_http_request_duration_seconds_count{
+                job="sre-observability-api",
+                method="GET",
+                route=~"/api/(work|slow|error)",
+                status_code!~"5.."
+              }[30m]
+            )
+          )
+
+      - record: sre_api:slo_latency:ratio30m
+        expr: >-
+          (
+            sre_api:slo_latency_good:increase30m
+            /
+            sre_api:slo_latency_total:increase30m
+          )
+          and on()
+          (
+            sre_api:slo_latency_total:increase30m > 0
+          )
+
+      - record: sre_api:slo_availability_target:ratio
+        expr: vector(0.99)
+
+      - record: sre_api:slo_latency_target:ratio
+        expr: vector(0.99)
+
+      - record: sre_api:slo_availability_error_budget:ratio
+        expr: >-
+          1
+          -
+          sre_api:slo_availability_target:ratio
+
+      - record: sre_api:slo_latency_error_budget:ratio
+        expr: >-
+          1
+          -
+          sre_api:slo_latency_target:ratio
+
+      - record: sre_api:slo_availability_budget_consumed:ratio30m
+        expr: >-
+          (
+            1
+            -
+            sre_api:slo_availability:ratio30m
+          )
+          /
+          sre_api:slo_availability_error_budget:ratio
+
+      - record: sre_api:slo_latency_budget_consumed:ratio30m
+        expr: >-
+          (
+            1
+            -
+            sre_api:slo_latency:ratio30m
+          )
+          /
+          sre_api:slo_latency_error_budget:ratio
+
+      - record: sre_api:slo_availability_budget_remaining:ratio30m
+        expr: >-
+          clamp_min(
+            1
+            -
+            sre_api:slo_availability_budget_consumed:ratio30m,
+            0
+          )
+
+      - record: sre_api:slo_latency_budget_remaining:ratio30m
+        expr: >-
+          clamp_min(
+            1
+            -
+            sre_api:slo_latency_budget_consumed:ratio30m,
+            0
+          )
