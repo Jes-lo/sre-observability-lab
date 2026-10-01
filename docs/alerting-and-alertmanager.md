@@ -431,8 +431,8 @@ Feature #7 does not introduce:
 - automated incident workflows
 - runbooks or postmortems
 
-Controlled load and failure scenarios are implemented in the next
-laboratory phase.
+Controlled load and failure scenarios are implemented separately in
+Feature #8.
 
-Incident-response workflows, runbooks, and postmortems remain a later
-phase.
+Incident-response workflows, runbooks, and postmortems are implemented
+separately in Feature #9.

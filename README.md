@@ -67,7 +67,10 @@ The current laboratory includes:
 - deterministic Prometheus alert-rule tests
 - isolated k6 controlled-load and controlled-failure scenarios
 - hardened load-test target on a dedicated internal Docker network
-- automated application, container, Prometheus, Grafana, logging, tracing, SLO, alerting, and load-scenario validation
+- reproducible availability and latency incident exercises
+- incident-response lifecycle and operational runbooks
+- blameless postmortem template and validated exercise examples
+- automated application, container, Prometheus, Grafana, logging, tracing, SLO, alerting, load-scenario, and incident-response validation
 
 Observability design and operational details are documented in:
 
@@ -76,6 +79,12 @@ Observability design and operational details are documented in:
 - [SLIs, SLOs, and Error Budgets](docs/slo-error-budgets.md)
 - [Alerting and Alertmanager](docs/alerting-and-alertmanager.md)
 - [Controlled Load and Failure Scenarios](docs/controlled-load-and-failures.md)
+- [Incident Response](docs/incident-response.md)
+- [Runbook: High HTTP 5xx Ratio](docs/runbooks/high-5xx.md)
+- [Runbook: High Latency Ratio](docs/runbooks/high-latency.md)
+- [Postmortem Template](docs/postmortems/template.md)
+- [Availability Incident Example](docs/postmortems/example-availability-exercise.md)
+- [Latency Incident Example](docs/postmortems/example-latency-exercise.md)
 
 ## Security Principles
 
@@ -124,8 +133,9 @@ Implemented so far:
 6. request-based SLIs, SLOs, and error budgets with Prometheus and Grafana
 7. symptom-based and burn-rate alerting with Prometheus and Alertmanager
 8. controlled load and failure scenarios with k6
+9. reproducible incident response, runbooks, and postmortems
 
-Planned next phases include incident-response workflows, runbooks, and postmortems.
+The feature roadmap is complete through incident response. Final fresh-clone reproducibility and release validation remain before `v1.0.0`.
 
 ## License and Third-Party Software
 

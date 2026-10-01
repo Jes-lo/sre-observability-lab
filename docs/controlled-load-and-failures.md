@@ -225,5 +225,5 @@ Feature #8 does not claim to provide:
 The scenarios intentionally remain small, local, reproducible, and
 bounded.
 
-Incident-response workflows, runbooks, and postmortems remain the
-next project phase.
+Incident-response workflows, runbooks, and postmortems are implemented
+separately in Feature #9.
