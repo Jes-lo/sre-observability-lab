@@ -158,3 +158,23 @@ jobs:
 
       - name: Run isolated controlled-load scenarios
         run: ./scripts/validate-load-runtime.sh
+
+  incident-response-validation:
+    name: Incident Response Validation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Validate incident-response documentation
+        run: ./scripts/validate-incident-response.sh
+
+      - name: Run availability incident exercise
+        run: ./scripts/run-incident-exercise.sh availability
+
+      - name: Run latency incident exercise
+        run: ./scripts/run-incident-exercise.sh latency
