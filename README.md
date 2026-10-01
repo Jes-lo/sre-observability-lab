@@ -40,6 +40,24 @@ Planned core components:
 - OpenTelemetry instrumentation
 - k6
 
+## Implemented Features
+
+The current laboratory includes:
+
+- instrumented Node.js API with RED metrics and controlled fault injection
+- Prometheus collection and recording rules
+- Grafana RED overview dashboard
+- structured application logging with sensitive-header redaction
+- Grafana Alloy file collection without Docker socket access
+- Loki centralized log storage
+- persistent Alloy file positions and Loki data
+- Grafana Loki datasource provisioning
+- automated application, container, Prometheus, Grafana, and logging validation
+
+Centralized logging design and operational details are documented in:
+
+- [Centralized Logging](docs/centralized-logging.md)
+
 ## Security Principles
 
 - no secrets committed to Git
@@ -77,4 +95,11 @@ Those concerns are intentionally separated from the SRE and observability focus.
 
 ## Status
 
-Foundation and architecture phase.
+Implemented so far:
+
+1. instrumented application
+2. Prometheus metrics collection and recording rules
+3. Grafana RED dashboard
+4. centralized logging with Grafana Alloy and Loki
+
+Planned next phases include distributed tracing, SLOs, alerting, controlled load, and incident-response workflows.

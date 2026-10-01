@@ -19,6 +19,10 @@ COPY --chown=node:node     package.json     package-lock.json     ./
 
 COPY --chown=node:node     src     ./src
 
+RUN mkdir -p /var/log/sre-api \
+    && chown node:node /var/log/sre-api \
+    && chmod 0755 /var/log/sre-api
+
 USER node
 
 EXPOSE 3000
