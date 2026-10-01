@@ -1,6 +1,6 @@
 # SRE & Observability Lab
 
-**Core technologies:** Node.js · Docker Compose · Prometheus · Grafana · Loki · Grafana Alloy · OpenTelemetry · Tempo · GitHub Actions
+**Core technologies:** Node.js · Docker Compose · Prometheus · Alertmanager · Grafana · Loki · Grafana Alloy · OpenTelemetry · Tempo · GitHub Actions
 
 A local, reproducible SRE and observability laboratory focused on service reliability engineering, telemetry correlation, SLOs, alerting, incident response, and troubleshooting.
 
@@ -61,13 +61,18 @@ The current laboratory includes:
 - 99% availability and latency SLOs over a rolling 30-minute local-lab window
 - Prometheus error-budget consumption and remaining-budget recording rules
 - Grafana SLO and error-budget dashboard
-- automated application, container, Prometheus, Grafana, logging, tracing, and SLO validation
+- symptom-based HTTP 5xx and latency alerts
+- multi-window availability and latency error-budget burn-rate alerting
+- local Alertmanager severity routing with no external notification credentials
+- deterministic Prometheus alert-rule tests
+- automated application, container, Prometheus, Grafana, logging, tracing, SLO, and alerting validation
 
 Observability design and operational details are documented in:
 
 - [Centralized Logging](docs/centralized-logging.md)
 - [Distributed Tracing](docs/distributed-tracing.md)
 - [SLIs, SLOs, and Error Budgets](docs/slo-error-budgets.md)
+- [Alerting and Alertmanager](docs/alerting-and-alertmanager.md)
 
 ## Security Principles
 
@@ -114,8 +119,9 @@ Implemented so far:
 4. centralized logging with Grafana Alloy and Loki
 5. OpenTelemetry distributed tracing with Alloy, Tempo, and bidirectional log correlation
 6. request-based SLIs, SLOs, and error budgets with Prometheus and Grafana
+7. symptom-based and burn-rate alerting with Prometheus and Alertmanager
 
-Planned next phases include alerting, controlled load, and incident-response workflows.
+Planned next phases include controlled load and incident-response workflows.
 
 ## License and Third-Party Software
 
