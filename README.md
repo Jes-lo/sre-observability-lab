@@ -52,11 +52,15 @@ The current laboratory includes:
 - Loki centralized log storage
 - persistent Alloy file positions and Loki data
 - Grafana Loki datasource provisioning
-- automated application, container, Prometheus, Grafana, and logging validation
+- OpenTelemetry distributed tracing exported through Grafana Alloy to Tempo
+- exact log-to-trace correlation with `trace_id` and `span_id`
+- bidirectional Grafana navigation between Loki logs and Tempo traces
+- automated application, container, Prometheus, Grafana, logging, and tracing validation
 
-Centralized logging design and operational details are documented in:
+Observability design and operational details are documented in:
 
 - [Centralized Logging](docs/centralized-logging.md)
+- [Distributed Tracing](docs/distributed-tracing.md)
 
 ## Security Principles
 
@@ -101,5 +105,6 @@ Implemented so far:
 2. Prometheus metrics collection and recording rules
 3. Grafana RED dashboard
 4. centralized logging with Grafana Alloy and Loki
+5. OpenTelemetry distributed tracing with Alloy, Tempo, and bidirectional log correlation
 
-Planned next phases include distributed tracing, SLOs, alerting, controlled load, and incident-response workflows.
+Planned next phases include SLOs, alerting, controlled load, and incident-response workflows.

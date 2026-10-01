@@ -1,3 +1,10 @@
+const {
+  shutdownTelemetry,
+  startTelemetry,
+} = require("./telemetry");
+
+startTelemetry();
+
 const { app } = require("./app");
 const { logger } = require("./logger");
 
@@ -17,7 +24,23 @@ const server = app.listen(port, host, () => {
 
 let shuttingDown = false;
 
-function flushAndExit(code) {
+async function flushAndExit(code) {
+  let exitCode = code;
+
+  try {
+    await shutdownTelemetry();
+  } catch (error) {
+    exitCode = 1;
+
+    process.stderr.write(
+      JSON.stringify({
+        level: "error",
+        event: "telemetry_shutdown_failed",
+        error: error.message,
+      }) + "\n"
+    );
+  }
+
   try {
     logger.flush((error) => {
       if (error) {
@@ -32,7 +55,7 @@ function flushAndExit(code) {
         process.exit(1);
       }
 
-      process.exit(code);
+      process.exit(exitCode);
     });
   } catch (error) {
     process.stderr.write(

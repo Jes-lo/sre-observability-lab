@@ -14,6 +14,12 @@ services:
       PORT: "3000"
       LAB_FAULTS_ENABLED: "false"
       LOG_FILE_PATH: /var/log/sre-api/api.log
+      OTEL_TRACES_ENABLED: "true"
+      OTEL_SERVICE_NAME: sre-observability-lab-api
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: "http://alloy:4318/v1/traces"
+      OTEL_TRACES_SAMPLER: always_on
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
 
     ports:
       - "127.0.0.1:3000:3000"
@@ -125,6 +131,43 @@ services:
 
     restart: "no"
 
+  tempo:
+    image: grafana/tempo@sha256:0296560ac66f8a3600d7fb3014a52c189d4d9c3549ad6ff441bf2409855d68d5
+
+    command:
+      - --config.file=/etc/tempo/config.yaml
+
+    user: "10001:10001"
+
+    volumes:
+      - ./tempo/config.yaml:/etc/tempo/config.yaml:ro
+      - tempo_data:/var/tempo
+
+    ports:
+      - "127.0.0.1:3200:3200"
+
+    read_only: true
+
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+
+    cap_drop:
+      - ALL
+
+    security_opt:
+      - no-new-privileges:true
+
+    mem_limit: 512m
+    cpus: 0.50
+    pids_limit: 150
+
+    init: true
+
+    networks:
+      - observability
+
+    restart: "no"
+
   alloy:
     image: grafana/alloy@sha256:2aa2099af76c0098d4af7a4d6e48f86cb66dc1a000222ad927a1c67c6542d13f
 
@@ -162,6 +205,8 @@ services:
       api:
         condition: service_healthy
       loki:
+        condition: service_started
+      tempo:
         condition: service_started
 
     networks:
@@ -244,6 +289,7 @@ volumes:
   grafana_data:
   loki_data:
   alloy_data:
+  tempo_data:
 
 networks:
   observability:
