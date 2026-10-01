@@ -14,6 +14,7 @@ rights.
 |---|---|---|---|
 | Prometheus | `sha256:6976aa8a60fec930796ce5772b8d12da7a318a5daa8d40d69c5c7819a05eeed7` | Metrics collection, storage, rules, and queries | Apache-2.0 |
 | Prometheus Alertmanager | `v0.34.1`, `prom/alertmanager@sha256:e9733bafb1bdef9b00e25a21f8f99dc26a22224bf16641ad754d1649f4c3357a` | Alert grouping, routing, silencing, and local alert inspection | Apache-2.0 |
+| Grafana k6 | `v2.3.0`, `grafana/k6@sha256:9c2dee7f8ed74d317e4027c06a10f169b625638189de8d4555d0b3486a5aeb34` | Controlled local load and fault-scenario generation | AGPL-3.0 |
 | Grafana | `sha256:b28bae15e219c998fb0e0424ed724930cc61b1f61fb404d47c862f9a23f9e572` | Dashboards and observability correlation | AGPL-3.0-only by default; see upstream licensing for exceptions |
 | Grafana Loki | `sha256:1107dd5274e0ada47e42472b7a7e71f3b2a2fe878878108f3e2f9e51528f0193` | Centralized log storage and queries | AGPL-3.0-only by default; see upstream licensing for exceptions |
 | Grafana Tempo | `sha256:0296560ac66f8a3600d7fb3014a52c189d4d9c3549ad6ff441bf2409855d68d5` | Distributed trace storage and queries | AGPL-3.0-only by default; see upstream licensing for exceptions |
@@ -58,8 +59,9 @@ automation, validation scripts, documentation, tests, diagrams, and
 integrations are created specifically for this portfolio project unless
 otherwise identified as third-party material.
 
-The repository does not claim ownership of Prometheus, Grafana, Loki, Tempo,
-Grafana Alloy, OpenTelemetry, Node.js, Docker, GitHub Actions, or any other
+The repository does not claim ownership of Prometheus, Alertmanager, Grafana,
+Loki, Tempo, Grafana Alloy, k6, OpenTelemetry, Node.js, Docker,
+GitHub Actions, or any other
 third-party technology used by the project.
 
 Third-party names and trademarks are used only for identification,

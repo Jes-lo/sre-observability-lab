@@ -20,6 +20,7 @@ Security issues relevant to this repository may include:
 - insecure OpenTelemetry collector or exporter configuration;
 - unbounded or unsafe telemetry cardinality;
 - insecure CI/CD configuration;
+- unsafe load generation or accidental targeting of external or production systems;
 - unintended privilege escalation;
 - security-sensitive documentation errors.
 
@@ -70,10 +71,28 @@ the engineering purpose of the laboratory.
 High-cardinality values should not be promoted to persistent metric or log
 labels without an explicit technical reason.
 
+## Controlled load and fault testing
+
+Controlled load and fault scenarios must target the dedicated local
+load-test runtime by default.
+
+The primary application must retain fault injection disabled unless a
+specific isolated validation procedure explicitly requires otherwise.
+
+The maintained Feature #8 workflow must not target production systems,
+employer systems, customer environments, or unrelated external services.
+
+Load-test containers should remain isolated from the host where practical,
+must not receive Docker socket access, and should use bounded resource
+limits.
+
+Changes that introduce external targets, credentials, destructive actions,
+or substantially higher load require explicit security and scope review.
+
 ## Observability and runtime changes
 
 Changes to application instrumentation, Docker Compose configuration,
-Prometheus, Alertmanager, Grafana, Loki, Tempo, Grafana Alloy,
+Prometheus, Alertmanager, Grafana, Loki, Tempo, Grafana Alloy, k6,
 OpenTelemetry configuration,
 container configuration, and repository security controls should be reviewed
 and validated before merge.

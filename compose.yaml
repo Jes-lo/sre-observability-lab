@@ -49,6 +49,95 @@ services:
 
     restart: "no"
 
+  api-load-target:
+    profiles:
+      - load-test
+
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+
+    image: sre-observability-api:load-test-local
+
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "3000"
+      LAB_FAULTS_ENABLED: "true"
+      LOG_FILE_PATH: /tmp/sre-api.log
+      OTEL_TRACES_ENABLED: "false"
+      OTEL_METRICS_EXPORTER: none
+      OTEL_LOGS_EXPORTER: none
+
+    read_only: true
+
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m,mode=1777
+
+    cap_drop:
+      - ALL
+
+    security_opt:
+      - no-new-privileges:true
+
+    mem_limit: 256m
+    cpus: 0.50
+    pids_limit: 100
+
+    init: true
+
+    networks:
+      - load_test
+
+    restart: "no"
+
+  k6:
+    profiles:
+      - load-test
+
+    image: grafana/k6@sha256:9c2dee7f8ed74d317e4027c06a10f169b625638189de8d4555d0b3486a5aeb34
+
+    user: "65534:65534"
+
+    environment:
+      HOME: /tmp
+      K6_NO_USAGE_REPORT: "true"
+      K6_SCENARIO: healthy
+      K6_TARGET_URL: http://api-load-target:3000
+
+    command:
+      - run
+      - /scripts/scenarios.js
+
+    volumes:
+      - ./load/k6:/scripts:ro
+
+    read_only: true
+
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m,mode=1777
+
+    cap_drop:
+      - ALL
+
+    security_opt:
+      - no-new-privileges:true
+
+    mem_limit: 256m
+    cpus: 0.50
+    pids_limit: 100
+
+    init: true
+
+    depends_on:
+      api-load-target:
+        condition: service_started
+
+    networks:
+      - load_test
+
+    restart: "no"
+
   prometheus:
     image: prom/prometheus@sha256:6976aa8a60fec930796ce5772b8d12da7a318a5daa8d40d69c5c7819a05eeed7
 
@@ -337,3 +426,7 @@ volumes:
 networks:
   observability:
     driver: bridge
+
+  load_test:
+    driver: bridge
+    internal: true
