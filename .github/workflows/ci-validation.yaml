@@ -56,7 +56,39 @@ jobs:
           persist-credentials: false
 
       - name: Validate hardened API container
+        env:
+          KEEP_IMAGE: "true"
         run: ./scripts/validate-api-container.sh
+
+      - name: Report API image vulnerabilities
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: image
+          image-ref: sre-observability-api:ci
+          format: table
+          exit-code: '0'
+          severity: HIGH,CRITICAL
+          vuln-type: os,library
+          hide-progress: true
+          version: v0.74.0
+
+      - name: Enforce fixable HIGH/CRITICAL image vulnerabilities
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          scan-type: image
+          image-ref: sre-observability-api:ci
+          format: table
+          exit-code: '1'
+          ignore-unfixed: true
+          severity: HIGH,CRITICAL
+          vuln-type: os,library
+          hide-progress: true
+          version: v0.74.0
+          skip-setup-trivy: true
+
+      - name: Clean up validated API image
+        if: always()
+        run: docker image rm -f sre-observability-api:ci >/dev/null 2>&1 || true
 
   prometheus-validation:
     name: Prometheus Configuration Validation
