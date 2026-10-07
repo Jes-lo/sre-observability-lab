@@ -9,10 +9,14 @@ ROOT_DIR="$(
 
 IMAGE="sre-observability-api:ci"
 CONTAINER="sre-observability-api-ci-test"
+KEEP_IMAGE="${KEEP_IMAGE:-false}"
 
 cleanup() {
   docker rm -f "$CONTAINER" >/dev/null 2>&1 || true
-  docker image rm "$IMAGE" >/dev/null 2>&1 || true
+
+  if [[ "$KEEP_IMAGE" != "true" ]]; then
+    docker image rm "$IMAGE" >/dev/null 2>&1 || true
+  fi
 }
 
 trap cleanup EXIT
